@@ -17,4 +17,8 @@ class Transaction extends Model
         'amount',
         'payment_status',
     ];
+
+    public function ticket() {
+        return $this->belognsTo(Ticket::class);
+    }
 }

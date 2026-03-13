@@ -23,4 +23,16 @@ class Event extends Model
         'image',
         'status',
     ];
+
+    public function organizer() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function category() {
+        return $this->belongsTo(EventCategory::class);
+    }
+
+    public function tickets() {
+        return $this->hasMany(Ticket::class);
+    }
 }

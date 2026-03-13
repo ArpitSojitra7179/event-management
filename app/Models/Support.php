@@ -17,4 +17,12 @@ class Support extends Model
         'department',
         'status',
     ];
+
+    public function user() {
+        return $this->belondsTo(User::class);
+    }
+
+    public function replies() {
+        return $this->hasMany(SupportReplies::class);
+    }
 }

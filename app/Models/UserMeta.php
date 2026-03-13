@@ -15,4 +15,8 @@ class UserMeta extends Model
         'key',
         'value',
     ];
+
+    public function user() {
+        return $this->belognsTo(User::class);
+    }
 }

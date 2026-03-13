@@ -18,4 +18,16 @@ class Ticket extends Model
         'booking_status',
     ];
 
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function event() {
+        return $this->belongsTo(Event::class);
+    }
+
+    public function transactions() {
+        return $this->hasOne(Transaction::class);
+    }
+
 }

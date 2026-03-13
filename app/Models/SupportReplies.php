@@ -16,4 +16,8 @@ class SupportReplies extends Model
         'message',
         'attachment',
     ];
+
+    public function support() {
+        return $this->belongsTo(Support::class);
+    }
 }
