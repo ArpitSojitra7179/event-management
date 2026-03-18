@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -60,5 +61,18 @@ class User extends Authenticatable
     }
     public function supports() {
         return $this->hasMany(Support::class);
+    }
+
+    protected function name(): Attribute {
+        return Attribute::make(
+            set: fn ($value) => strtolower($value),
+            get: fn ($value) => ucfirst($value),
+        );
+    }
+
+    protected function email() : Attribute {
+        return Attribute::make(
+            set: fn ($value) => strtolower($value),
+        );
     }
 }
