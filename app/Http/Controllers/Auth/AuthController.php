@@ -81,12 +81,14 @@ class AuthController extends Controller
         }
     }
 
-    public function forgotPassword(Request $request, User $user) {
+    public function forgotPassword(Request $request) {
             $validated = $request->validate([
                 'email' => 'required|email|exists:users,email',
             ]);
         
         try {
+            $user = User::where('email', $validated['email'])->first();
+
             $token = Str::random(60);
 
             DB::table('password_reset_tokens')->updateOrInsert([
