@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 namespace App\Models;
 
@@ -19,6 +19,6 @@ class Transaction extends Model
     ];
 
     public function ticket() {
-        return $this->belognsTo(Ticket::class);
+        return $this->belongsTo(Ticket::class);
     }
 }

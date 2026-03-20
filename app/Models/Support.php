@@ -19,7 +19,7 @@ class Support extends Model
     ];
 
     public function user() {
-        return $this->belondsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function replies() {
