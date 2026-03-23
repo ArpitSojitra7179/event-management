@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\User\OrganizerRequestController;
+use App\Http\Controllers\Admin\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,4 +26,8 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/login-user', 'login');
     Route::post('/forgot-password', 'forgotPassword');
     Route::post('/reset-password/{token}', 'resetPassword');
+});
+
+Route::controller(OrganizerRequestController::class)->group(function () {
+    Route::post('/organizer-request', 'organizerRequest')->middleware('auth:api');
 });
