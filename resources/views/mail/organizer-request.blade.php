@@ -11,7 +11,7 @@ Dear Admin pls approve my request
 | {{ $user->name }} | {{ $user->email }} |
 @endcomponent
 
-@component('mail::button', ['url' => url('http://localhost:8000/api/organizer-request-list'), 'color' => 'success'])
+@component('mail::button', ['url' => url('http://localhost:8000/admin/organizer-request-list'), 'color' => 'success'])
 Show Request List
 @endcomponent
 
