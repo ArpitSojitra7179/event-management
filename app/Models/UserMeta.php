@@ -10,6 +10,8 @@ class UserMeta extends Model
 {
     use HasApiTokens, HasFactory;
 
+    protected $table = 'user_meta';
+
     protected $fillable = [
         'user_id',
         'key',
@@ -17,6 +19,10 @@ class UserMeta extends Model
     ];
 
     public function user() {
-        return $this->belognsTo(User::class);
+        return $this->belongsTo(User::class);
     }
+
+    protected $casts = [
+        'value' => 'array',
+    ];
 }
