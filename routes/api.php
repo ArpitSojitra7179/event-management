@@ -28,6 +28,3 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/reset-password/{token}', 'resetPassword');
 });
 
-Route::controller(OrganizerRequestController::class)->group(function () {
-    Route::post('/organizer-request', 'organizerRequest')->middleware('auth:api');
-});
