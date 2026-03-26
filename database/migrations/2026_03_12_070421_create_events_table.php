@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('total_tickets');
             $table->integer('available_tickets');
             $table->string('image');
-            $table->string('status');
+            $table->string('status')->default('pending');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
