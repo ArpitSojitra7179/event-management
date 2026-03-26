@@ -9,4 +9,5 @@ Route::controller(AdminController::class)->middleware(['auth:api', 'IsAdmin'])->
     Route::patch('/approve-request/{user}', 'approveRequest');
     Route::post('/set-event-category', 'setEventCategories');
     Route::get('/get-all-users', 'allUsers');
+    Route::get('/get-event-category-list', 'eventCategoryIndex');
 });
