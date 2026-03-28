@@ -25,7 +25,7 @@ class OrganizerController extends Controller
 
     public function createEvent(Request $request, User $user)
     {
-        $validated = $request->validate([
+        $request->validate([
             'category_id' => 'required|integer',
             'title' => 'required|string',
             'description' => 'required|string',
@@ -47,27 +47,25 @@ class OrganizerController extends Controller
 
             $event = Event::updateOrCreate([
                 'user_id' => $user->id,
-                'category_id' => $validated['category_id'],
-                'title' => $validated['title'],
-                'description' => $validated['description'],
-                'location' => $validated['location'],
-                'event_date' => $validated['event_date'],
-                'ticket_price' => $validated['ticket_price'],
-                'total_tickets' => $validated['total_tickets'],
-                'available_tickets' => $validated['available_tickets'],
-                'image' => $validated['image'],
+                'category_id' => $request->category_id,
+                'title' => $request->title,
+                'description' => $request->description,
+                'location' => $request->location,
+                'event_date' => $request->event_date,
+                'ticket_price' => $request->ticket_price,
+                'total_tickets' => $request->total_tickets,
+                'available_tickets' => $request->available_tickets,
+                'image' => $request->image,
             ]);
 
             return response()->json([
                 'message' => 'Event created successfully.',
-                'event' => $event,
-                'image_url' => asset('storage/' . $event->image),
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }

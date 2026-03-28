@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use App\Models\UserMeta;
 use App\Models\EventCategory;
 use App\Interfaces\EventRepositoryInterface;
@@ -26,13 +25,13 @@ class AdminController extends Controller
             $requestList = UserMeta::all();
 
             return response()->json([
-                'Request List' => $requestList,
+                'request_list' => $requestList,
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.'
+                'message' => 'Something went wrong.'
             ], 500);
         }
     }
@@ -42,9 +41,12 @@ class AdminController extends Controller
             $user->update(['role' => 'organizer']);
 
             UserMeta::where([
-                ['user_id', $user->id],
-                ['key', 'organizer_request']
-            ])->delete();
+            [
+                'user_id', $user->id
+            ],[
+                'key', 'organizer_request'
+            ],
+        ])->delete();
 
             return response()->json([
                 'message' => 'Your request is approved now you promoted to organizer.'
@@ -53,20 +55,20 @@ class AdminController extends Controller
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }
 
     public function setEventCategories(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string',
         ]);
 
         try {
             $setCategory = EventCategory::create([
-                'name' => $validated['name'],
+                'name' => $request->name,
             ]);
 
             return response()->json([
@@ -80,26 +82,7 @@ class AdminController extends Controller
             ], 500);
         }
     }
-
-    public function allUsers(Request $request)
-    {
-        try {
-            $user = User::query()->when($request->role, function ($query, $role) {
-                return $query->where('role', $role);
-            })->get();
-
-            return response()->json([
-                'All User List' => $user,
-            ], 200);
-        } catch (\Exception $e) {
-            report($e);
-
-            return response()->json([
-                'message' => 'Something Went Wrong.',
-            ], 500);
-        }
-    }
-
+    
     public function eventCategoryIndex()
     {
         return $this->eventRepo->getAllEventCategories();

@@ -15,48 +15,52 @@ use App\Models\User;
 class AuthController extends Controller
 {
     public function register(Request $request) {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email',
-                'password' => 'required|string|min:8',
-                'phone' => 'nullable|string|max:10',
-            ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
+            'phone' => 'nullable|string|max:10',
+        ]);
 
         try {
             $userCount = User::count();
             if ($userCount == 0) {
-                $role = 'admin';
+                $role = 'administrator';
             } else {
                 $role = 'customer';
             }
             
             $user = User::create([
                 'role' => $role,
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => bcrypt($validated['password']),
-                'phone' => $validated['phone'],
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'phone' => $request->phone,
             ]);
 
-            $token = $user->createToken('register token')->accessToken;
+            $token = $user->createToken('register_token')->accessToken;
 
             Mail::to($user->email)->queue((new UserRegister($user))->delay(now()->addSeconds(5)));
 
             return response()->json([
-                'message' => 'User Created Successfully.',
-                'User' => $user,
-                'Register Token' => $token,
+                'message' => 'User created successfully.',
+                'token' => $token,
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }
 
     public function login(Request $request) {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
+        ]);
+
         try {
             $credentials = $request->only('email', 'password');
 
@@ -66,38 +70,38 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $token = $request->user()->createToken('Login Token')->accessToken;
+            $token = $request->user()->createToken('login_token')->accessToken;
 
             return response()->json([
-                'ditails' => $credentials,
+                'message' => 'Usre login successfully.',
                 'token' => $token,
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }
 
     public function forgotPassword(Request $request) {
-            $validated = $request->validate([
+            $request->validate([
                 'email' => 'required|email|exists:users,email',
             ]);
         
         try {
-            $user = User::where('email', $validated['email'])->first();
+            $user = User::where('email', $request->email)->latest()->first();
 
             $token = Str::random(60);
 
             DB::table('password_reset_tokens')->updateOrInsert([
-                'email' => $validated['email'],
+                'email' => $request->email,
                 'token' => $token,
             ]);
 
-            Mail::to($validated['email'])
-                ->queue((new ResetPasswordMail($token, $validated['email'], $user))
+            Mail::to($request->email)
+                ->queue((new ResetPasswordMail($token, $request->email, $user))
                 ->delay(now()->addSeconds(5)));
 
             return response()->json([
@@ -107,47 +111,52 @@ class AuthController extends Controller
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }
 
     public function resetPassword(Request $request, $token) {
-            $validated = $request->validate([
+            $request->validate([
+                'email' => 'required|email|exists:users,email',
                 'password' => 'required|string|min:8|confirmed',
             ]);
 
         try {
-            $email = $request->query('email');
 
             $reset = DB::table('password_reset_tokens')->where([
-                    'email' => $email,
+                    'email' => $request->email,
                     'token' => $token,
-                ])->first();
+                ])->latest()->first();
 
             if (!$reset) {
                 return response()->json([
-                    'message' => 'Invalid Token',
+                    'message' => 'Invalid token',
                 ], 500);
             }
 
-            $user = User::where('email', $email)->first();
+            $user = User::where('email', $reset->email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not found.',
+                ], 404);
+            }
 
             $user->update([
-                'password' => bcrypt($validated['password']),
+                'password' => bcrypt($request->password),
             ]);
 
-            DB::table('password_reset_tokens')->where('email', $email)->delete();
-            // $reset->delete();
-
+            DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+            
             return response()->json([
-                'message' => 'Password reset Successfully',
+                'message' => 'Password reset successfully',
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }

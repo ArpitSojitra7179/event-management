@@ -12,38 +12,39 @@ use App\Models\UserMeta;
 
 class OrganizerRequestController extends Controller
 {
-    public function organizerRequest(Request $request, User $user) {
-            $validated = $request->validate([
+    public function organizerRequest(Request $request) {
+            $request->validate([
                 'description' => 'required|string'
             ]);
+
         try {
             $user = auth()->user();
+            $adminEmail = User::where('role', 'administrator')->value('email');
 
             $requestData = json_encode([
                 'name' => $user->name,
                 'email' => $user->email,
                 'status' => 'pending',
-                'description' => $validated['description'],
+                'description' => $request->description,
             ]);
 
-            $userMeta = UserMeta::updateOrCreate(
-                ['user_id' => $user->id, 'key' => 'organizer_request'],
-                [
-                    'value' => $requestData,
-                ],
-            );
+            $userMeta = UserMeta::updateOrCreate([
+                'user_id' => $user->id,
+                'key' => 'organizer_request'
+            ],[
+                'value' => $requestData,
+            ]);
 
-            Mail::to('admin@gmail.com')->queue((new OrganizerRequestMail($user))->delay(now()->addSeconds(5)));
+            Mail::to($adminEmail)->queue((new OrganizerRequestMail($user))->delay(now()->addSeconds(5)));
 
             return response()->json([
-                'success' => 'Your Request is sent to admin.',
-                'user meta' => $userMeta,
+                'message' => 'Your Request is sent to admin.',
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }

@@ -18,7 +18,7 @@ class AdminMiddleware
     {
         $user = Auth::guard('api')->user();
 
-        if (! $user || $user->role !== 'admin') {
+        if (! $user || $user->role !== 'administrator') {
             return response()->json([
                 'message' => 'You are not an Admin, So you cannot access this route.'
             ], 403);

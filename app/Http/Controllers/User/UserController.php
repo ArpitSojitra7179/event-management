@@ -11,51 +11,50 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function show(User $user) 
+    public function show() 
     {
         try {
             $user = auth()->user();
 
             return response()->json([
-                'Your Detail' => $user,
+                'user' => $user,
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }
 
     public function update(Request $request) 
     {
-        $validated = $request->validate([
-            'name' => 'nullable|string',
+        $request->validate([
+            'name' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:10',
         ]);
 
         try {
             $user = auth()->user();
 
-            $user->update($validated);
+            $user->update($request->only(['name', 'phone']));
 
             return response()->json([
                 'message' => 'Your record updated successfully.',
-                'updated record' => $user,
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }
 
     public function changePassword(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'current_password' => ['required', new MatchOldPassword],
             'new_password' => 'required|string|min:8|confirmed',
         ]);
@@ -63,25 +62,26 @@ class UserController extends Controller
         try {
             $user = auth()->user();
 
-            $user->password = Hash::make($validated['new_password']);
-            $user->save();
+            $user->update([
+                'password' => bcrypt($request->new_password),
+            ]);
 
             return response()->json([
-                'message' => 'Password change successfully.',
+                'message' => 'Password changed successfully.',
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }
 
-    public function deleteUser(Request $request)
+    public function destroy(Request $request)
     {
 
-        $validated = $request->validate([
+        $request->validate([
             'password' => ['required', 'confirmed', new MatchOldPassword],
         ]);
 
@@ -95,13 +95,13 @@ class UserController extends Controller
             $user->delete();
 
             return response()->json([
-                'message' => 'User deleted successfully'
+                'message' => 'User deleted successfully.'
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }

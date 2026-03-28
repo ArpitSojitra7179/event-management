@@ -14,5 +14,5 @@ Route::middleware('auth:api')->controller(UserController::class)->group(function
 	Route::get('/show-user', 'show');
 	Route::patch('/update-record', 'update');
 	Route::post('/change-password', 'changePassword');
-	Route::delete('/delete-user', 'deleteUser');
+	Route::delete('/delete-user', 'destroy');
 });
