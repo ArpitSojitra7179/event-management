@@ -32,7 +32,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:10',
+            'phone' => 'nullable|string|min:10|max:10',
         ]);
 
         try {
