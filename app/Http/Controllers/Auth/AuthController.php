@@ -70,6 +70,14 @@ class AuthController extends Controller
                 ], 401);
             }
 
+            $user = Auth::user();
+
+            if (! $user || $user->status == 'banned') {
+                return response()->json([
+                    'message' => 'you are banned, so cannot login',
+                ], 403);
+            }
+
             $token = $request->user()->createToken('login_token')->accessToken;
 
             return response()->json([
@@ -135,7 +143,7 @@ class AuthController extends Controller
                 ], 500);
             }
 
-            $user = User::where('email', $reset->email)->first();
+            $user = User::where('email', $reset->email)->latest()->first();
 
             if (!$user) {
                 return response()->json([
