@@ -36,7 +36,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:10',
+            'phone' => 'nullable|string|min:10|max:10',
         ]);
 
         try {
@@ -44,6 +44,35 @@ class UserController extends Controller
 
             return response()->json([
                 'message' => 'User record updated successfully.',
+            ], 200);
+        } catch (\Exception $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'Something went wrong.',
+            ], 500);
+        }
+    }
+
+    public function banUser(User $user)
+    {
+        try {
+            $user->tokens->each(function ($token) {
+                $token->delete();
+            });
+
+            if (! $user || $user->status == 'banned') {
+                return response()->json([
+                    'message' => 'User already banned.',
+                ]);
+            }
+
+            $user->update([
+                'status' => 'banned',
+            ]);
+
+            return response()->json([
+                'message' => 'User banned successfully.'
             ], 200);
         } catch (\Exception $e) {
             report($e);

@@ -15,4 +15,5 @@ Route::controller(AdminController::class)->middleware(['auth:api', 'IsAdmin'])->
 Route::controller(UserController::class)->middleware(['auth:api', 'IsAdmin'])->group( function () {
     Route::get('/get-all-users', 'index');
     Route::patch('/edit-user-data/{user}', 'update');
+    Route::patch('/ban-user/{user}', 'banUser');
 });
