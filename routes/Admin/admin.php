@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\EventController;
 
 Route::controller(AdminController::class)->middleware(['auth:api', 'IsAdmin'])->group(function () {
-    Route::get('/organizer-request-list', 'requestList');
+    Route::get('/request-list', 'requestList');
     Route::patch('/approve-request/{user}', 'approveRequest');
 });
 

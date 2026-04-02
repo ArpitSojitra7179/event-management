@@ -36,11 +36,20 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
             'phone' => 'nullable|string|min:10|max:10',
         ]);
 
         try {
-            $user->update($request->only('name', 'phone'));
+            $email = User::where('status', 'active')->pluck('email');
+
+            if ($email == $request->email) {
+                return response()->json([
+                    'message' => 'This email is already exists',
+                ]);
+            }
+
+            $user->update($request->only('name', 'email', 'phone'));
 
             return response()->json([
                 'message' => 'User record updated successfully.',
