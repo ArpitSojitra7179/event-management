@@ -17,7 +17,9 @@ class AdminController extends Controller
         try {
             $user = auth()->user();
 
-            $requestList = UserMeta::all();
+            $requestList = UserMeta::query()->when($request->key, function ($query, $key) {
+                return $query->where('key', $key);
+            })->get();
 
             return response()->json([
                 'request_list' => $requestList,
