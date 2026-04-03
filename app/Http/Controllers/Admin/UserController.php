@@ -41,11 +41,11 @@ class UserController extends Controller
         ]);
 
         try {
-            $email = User::where('status', 'active')->pluck('email');
+            $email = User::where('email', $request->email)->exists();
 
-            if ($email == $request->email) {
+            if ($email) {
                 return response()->json([
-                    'message' => 'This email is already exists',
+                    'message' => 'This email is already exists.',
                 ]);
             }
 
