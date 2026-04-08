@@ -12,22 +12,24 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $user = User::query()->when($request->role, function ($query, $role) {
+            $user = User::when($request->role, function ($query, $role) {
                 return $query->where('role', $role);
             })->when($request->email, function ($query, $email) {
                 return $query->where('email', $email);
             })->when($request->name, function ($query, $name) {
                 return $query->where('name', $name);
+            })->when($request->status, function ($query, $status) {
+                return $query->where('status', $status);
             })->get();
 
             return response()->json([
-                'All User List' => $user,
+                'Users' => $user,
             ], 200);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => 'Something Went Wrong.',
+                'message' => 'Something went wrong.',
             ], 500);
         }
     }
@@ -52,7 +54,7 @@ class UserController extends Controller
             $user->update($request->only('name', 'email', 'phone'));
 
             return response()->json([
-                'message' => 'User record updated successfully.',
+                'message' => 'Your account has been updated successfully.',
             ], 200);
         } catch (\Exception $e) {
             report($e);
@@ -81,7 +83,7 @@ class UserController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'User banned successfully.'
+                'message' => 'User account banned successfully.'
             ], 200);
         } catch (\Exception $e) {
             report($e);
