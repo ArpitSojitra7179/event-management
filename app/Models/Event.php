@@ -24,7 +24,7 @@ class Event extends Model
         'status',
     ];
 
-    public function organizer() {
+    public function user() {
         return $this->belongsTo(User::class);
     }
 

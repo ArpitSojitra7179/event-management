@@ -49,7 +49,7 @@ class User extends Authenticatable
     ];
 
 
-    public function meta() {
+    public function metas() {
         return $this->hasMany(UserMeta::class);
     }
 
@@ -60,6 +60,7 @@ class User extends Authenticatable
     public function tickets() {
         return $this->hasMany(Ticket::class);
     }
+    
     public function supports() {
         return $this->hasMany(Support::class);
     }
