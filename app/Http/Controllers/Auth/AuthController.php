@@ -81,7 +81,7 @@ class AuthController extends Controller
             $token = $request->user()->createToken('login_token')->accessToken;
 
             return response()->json([
-                'message' => 'Usre login successfully.',
+                'message' => 'login successfully.',
                 'token' => $token,
             ], 200);
         } catch (\Exception $e) {
@@ -99,6 +99,8 @@ class AuthController extends Controller
             ]);
         
         try {
+            $user = Auth::user();
+
             $user = User::where('email', $request->email)->latest()->first();
 
             $token = Str::random(60);
@@ -159,6 +161,33 @@ class AuthController extends Controller
             
             return response()->json([
                 'message' => 'Password reset successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'Something went wrong.',
+            ], 500);
+        }
+    }
+
+    public function logout()
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'user not found.',
+                ], 404);
+            }
+
+            $user->tokens->each(function ($token) {
+                $token->delete();
+            });
+
+            return response()->json([
+                'message' => 'Logout successfully.',
             ], 200);
         } catch (\Exception $e) {
             report($e);

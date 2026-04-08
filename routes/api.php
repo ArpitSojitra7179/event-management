@@ -26,5 +26,6 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/login-user', 'login');
     Route::post('/forgot-password', 'forgotPassword');
     Route::post('/reset-password/{token}', 'resetPassword');
+    Route::post('/logout-user', 'logout')->middleware('auth:api');
 });
 
