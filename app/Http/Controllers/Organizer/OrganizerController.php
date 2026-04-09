@@ -11,16 +11,24 @@ use App\Models\Event;
 
 class OrganizerController extends Controller
 {
-    protected $eventRepo;
+    protected $eventRepository;
 
-    public function __construct(EventRepositoryInterface $eventRepo)
+    public function __construct(EventRepositoryInterface $eventRepository)
     {
-        $this->eventRepo = $eventRepo;
+        $this->eventRepository = $eventRepository;
     }
 
     public function index()
     {
-        return $this->eventRepo->getAllEventCategories();
+        try {
+            return $this->eventRepository->getCategories();
+        } catch (\Exception $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'Something went wrong',
+            ], 500);
+        }
     }
 
     public function createEvent(Request $request, User $user)
@@ -34,7 +42,7 @@ class OrganizerController extends Controller
             'ticket_price' => 'required|numeric',
             'total_tickets' => 'required|integer',
             'available_tickets' => 'required|integer',
-            'image' => 'required|image|mimes:jpeg,jpg,png,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,jpg,png,gif,svg,webp|max:2048',
         ]);
 
         try {
