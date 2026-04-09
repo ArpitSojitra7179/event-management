@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone')->unique()->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
