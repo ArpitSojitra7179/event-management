@@ -2,8 +2,10 @@
 
 namespace App\Interfaces;
 
+use Illuminate\Http\Request;
+
 interface EventRepositoryInterface
 {
-	public function getAllEventCategories();
-	public function getAllEvent(array $data);
+	public function getCategories();
+	public function getEvents(Request $request);
 }
