@@ -10,15 +10,23 @@ use App\Interfaces\EventRepositoryInterface;
 
 class EventController extends Controller
 {
-    protected $eventRepo;
+    protected $eventRepository;
 
-    public function __construct(EventRepositoryInterface $eventRepo)
+    public function __construct(EventRepositoryInterface $eventRepository)
     {
-        $this->eventRepo = $eventRepo;
+        $this->eventRepository = $eventRepository;   
     }
 
     public function index(Request $request)
     {
-        return $this->eventRepo->getAllEvent($request->all());
+        try {
+            return $this->eventRepository->getEvents($request);   
+        } catch (\Exception $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'Something went wrong.',
+            ], 500);
+        }
     }
 }
