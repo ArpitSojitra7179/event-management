@@ -41,7 +41,7 @@ class UserController extends Controller
             $user->update($request->only(['name', 'phone']));
 
             return response()->json([
-                'message' => 'Your record updated successfully.',
+                'message' => 'Your account has been updated successfully.',
             ], 200);
         } catch (\Exception $e) {
             report($e);
@@ -95,7 +95,7 @@ class UserController extends Controller
             $user->delete();
 
             return response()->json([
-                'message' => 'User deleted successfully.'
+                'message' => 'User account has been deleted successfully.'
             ], 200);
         } catch (\Exception $e) {
             report($e);
