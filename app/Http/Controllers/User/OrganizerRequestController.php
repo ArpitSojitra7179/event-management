@@ -28,8 +28,7 @@ class OrganizerRequestController extends Controller
                 'description' => $request->description,
             ]);
 
-            $userMeta = UserMeta::updateOrCreate([
-                'user_id' => $user->id,
+            $userMeta = $user->metas()->updateOrCreate([
                 'key' => 'organizer_request'
             ],[
                 'value' => $requestData,
