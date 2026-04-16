@@ -72,7 +72,7 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            if (! $user || $user->status == 'banned') {
+            if ($user->status == 'banned') {
                 return response()->json([
                     'message' => 'you are banned, so cannot login',
                 ], 403);
@@ -94,9 +94,9 @@ class AuthController extends Controller
     }
 
     public function forgotPassword(Request $request) {
-            $request->validate([
-                'email' => 'required|email|exists:users,email',
-            ]);
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
         
         try {
             $user = Auth::user();
