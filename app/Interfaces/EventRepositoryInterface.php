@@ -3,9 +3,10 @@
 namespace App\Interfaces;
 
 use Illuminate\Http\Request;
+use App\Models\Event;
 
 interface EventRepositoryInterface
 {
-	public function getCategories();
-	public function getEvents(Request $request);
+	public function categories();
+	public function events(Request $request);
 }
