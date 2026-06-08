@@ -75,7 +75,7 @@ class AuthController extends Controller
             if ($user->status == 'banned') {
                 return response()->json([
                     'message' => 'you are banned, so cannot login',
-                ], 403);
+                ], 500);
             }
 
             $token = $request->user()->createToken('login_token')->accessToken;
