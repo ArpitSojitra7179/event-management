@@ -13,20 +13,39 @@ use App\Models\UserMeta;
 class OrganizerRequestController extends Controller
 {
     public function organizerRequest(Request $request) {
-            $request->validate([
-                'description' => 'required|string'
-            ]);
+        $request->validate([
+            'description' => 'required|string'
+        ]);
 
         try {
             $user = auth()->user();
-            $adminEmail = User::where('role', 'administrator')->value('email');
 
-            $requestData = json_encode([
-                'name' => $user->name,
-                'email' => $user->email,
+            if ($user->role == 'organizer') {
+                return response()->json([
+                    'message' => 'you cannot send request to become a organizer, because you are already organizer.',
+                ], 500);
+            }
+
+            $record = $user->metas()->where('key', 'organizer_request')->latest()->first();
+
+            if ($record) {
+                $array = json_encode($record->value);
+                $value = json_decode($array);
+                $status = $value->status;
+
+                if (!isset($status) || $status == 'pending') {
+                    return response()->json([
+                        'message' => 'You are already send request to become a organizer.'
+                    ], 500);
+                }
+            }
+
+            $adminEmail = User::where('role', 'administrator')->get()->value('email');
+
+            $requestData = [
                 'status' => 'pending',
                 'description' => $request->description,
-            ]);
+            ];
 
             $userMeta = $user->metas()->updateOrCreate([
                 'key' => 'organizer_request'
