@@ -12,12 +12,13 @@ Route::controller(OrganizerRequestController::class)->group(function () {
 });
 
 Route::middleware('auth:api')->controller(UserController::class)->group(function () {
-	Route::get('/show-user', 'show');
-	Route::patch('/update-record', 'update');
+	Route::get('/user', 'show');
+	Route::patch('/update', 'update');
 	Route::post('/change-password', 'changePassword');
-	Route::delete('/delete-user', 'destroy');
+	Route::delete('/delete', 'destroy');
 });
 
 Route::controller(EventController::class)->middleware('auth:api')->group(function () {
-	Route::get('/check-events', 'index');
+	Route::get('/events', 'index');
+	Route::get('/event/{event}', 'show');
 });
