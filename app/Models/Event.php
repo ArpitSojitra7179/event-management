@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Event extends Model
 {
@@ -34,5 +35,9 @@ class Event extends Model
 
     public function tickets() {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function metas() {
+        return $this->hasMany(EventMeta::class);
     }
 }
