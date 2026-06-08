@@ -20,7 +20,21 @@ class EventController extends Controller
     public function index(Request $request)
     {
         try {
-            return $this->eventRepository->getEvents($request);   
+            return $this->eventRepository->events($request);   
+        } catch (\Exception $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'Something went wrong.',
+            ], 500);
+        }
+    }
+
+    public function show(Event $event) {
+        try {
+            return response()->json([
+                'event' => $event,
+            ], 200);
         } catch (\Exception $e) {
             report($e);
 
