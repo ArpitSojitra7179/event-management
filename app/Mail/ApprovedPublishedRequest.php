@@ -13,11 +13,25 @@ class ApprovedPublishedRequest extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    public $event;
+    public $reason;
 
-    public function __construct($user)
+    public function __construct($event)
     {
-        $this->user = $user;
+        $this->event = $event;
+
+        if ($event->status == 'rejected') {
+            $meta = $event->metas()->where('key', 'event_request')->latest()->first();
+
+            if ($meta) {
+                // $value = json_encode($meta->value);
+                // $metaArray = json_decode($value);
+
+                $data = is_array($meta->value) ? $meta->value : json_decode($meta->value, true);
+
+                $this->reason = $data['reason'] ?? 'no reason provided.';
+            }
+        }
     }
 
     /**
@@ -35,10 +49,11 @@ class ApprovedPublishedRequest extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
+    return new Content(
             markdown: 'mail.approved-eventpublish-request',
             with: [
-                'user' => $this->user,
+                'event' => $this->event,
+                'reason'=> $this->reason,
             ],
         );
     }

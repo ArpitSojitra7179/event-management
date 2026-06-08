@@ -14,10 +14,28 @@ class ApprovedOrganizerMail extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+    public $status;
+    public $reason;
 
     public function __construct($user)
     {
         $this->user = $user;
+        $meta = $user->metas()->where('key', 'organizer_request')->latest()->first();
+
+        if ($meta) {
+            // $value = json_encode($meta->value);
+            // $metaArray = json_decode($value);
+
+            // $this->status = $metaArray->status;
+
+            $data = is_array($meta->value) ? $meta->value : json_decode($meta->value, true);
+
+            $this->status = $data['status'] ?? null;
+
+            if ($this->status == 'rejected') {
+                $this->reason = $data['reason'] ?? 'no reason provided.';
+            }
+        }
     }
 
     /**
@@ -39,6 +57,8 @@ class ApprovedOrganizerMail extends Mailable
             markdown: 'mail.approved-organizer',
             with: [
                 'user' => $this->user,
+                'status' => $this->status,
+                'reason' => $this->reason,
             ],
         );
     }
