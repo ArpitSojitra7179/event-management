@@ -11,6 +11,10 @@ You can requested to reset password pls click on below button.
 Reset Password
 @endcomponent
 
+@component('mail::subcopy')
+This email was sent automatically. Please do not reply.
+@endcomponent
+
 Thanks,<br>
 {{ config('app.name') }}
 
