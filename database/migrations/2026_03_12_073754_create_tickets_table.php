@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('event_id');
             $table->integer('quantity');
             $table->decimal('total_price');
-            $table->string('booking_status');
+            $table->string('booking_status')->default('pending');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
