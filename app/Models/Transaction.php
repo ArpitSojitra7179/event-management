@@ -1,4 +1,4 @@
- <?php
+<?php
 
 namespace App\Models;
 
@@ -15,10 +15,19 @@ class Transaction extends Model
         'payment_method',
         'transaction_id',
         'amount',
+        'key',
+        'services',
+        'gateway',
+        'payment_link',
         'payment_status',
+        'paid_at',
     ];
 
     public function ticket() {
         return $this->belongsTo(Ticket::class);
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 }

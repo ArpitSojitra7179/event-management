@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\softDeletes;
 use Laravel\Passport\HasApiTokens;
+use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, softDeletes;
+    use HasApiTokens, HasFactory, Notifiable, softDeletes, Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -60,6 +61,10 @@ class User extends Authenticatable
 
     public function tickets() {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function transactions() {
+        return $this->hasManyThrough(Transaction::class, Ticket::class);
     }
     
     public function supports() {
