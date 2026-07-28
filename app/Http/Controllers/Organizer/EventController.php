@@ -12,6 +12,8 @@ use App\Mail\EventPublishRequestMail;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\EventMeta;
+use App\Enums\EventStatus;
+use App\Http\helper;
 
 class EventController extends Controller
 {
@@ -55,7 +57,7 @@ class EventController extends Controller
 
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
-                $fileName = Str::random(10) . '.' . $file->getClientOriginalExtension();
+                $fileName = helper::generateUniqueToken('events', 'image', 10) . '.' . $file->getClientOriginalExtension();
                 $imagePath = $file->storeAs('events', $fileName, 'public');
             }
 
@@ -117,7 +119,7 @@ class EventController extends Controller
                 ], 500);
             }
 
-            if ($event->status == "approved") {
+            if ($event->status == EventStatus::APPROVED) {
                 return response()->json([
                     'message' => 'this event is already approved',
                 ], 500);
@@ -241,6 +243,34 @@ class EventController extends Controller
 
             return response()->json([
                 'message' => 'Your event was deleted successfully.',
+            ], 200);
+        } catch (\Exception $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'Something went wrong.',
+            ], 500);
+        }
+    }
+
+    public function showEventTickets(Event $event)
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user->events()->where('id', $event->id)->exists()) {
+                return response()->json([
+                    'message' => 'This is not your event, so can not see its details.',
+                ], 500);
+            }
+
+            $tickets = $event->tickets()->with([
+                'user:id,name,email,phone',
+                'event:id,title,event_date'
+            ])->orderByDesc('id')->get();
+
+            return response()->json([
+                'event all tickets' => $tickets
             ], 200);
         } catch (\Exception $e) {
             report($e);
