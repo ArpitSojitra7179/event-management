@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Enums\EventStatus;
 
 class Event extends Model
 {
@@ -23,6 +24,10 @@ class Event extends Model
         'available_tickets',
         'image',
         'status',
+    ];
+
+    protected $casts = [
+        'status' => EventStatus::class,
     ];
 
     public function user() {

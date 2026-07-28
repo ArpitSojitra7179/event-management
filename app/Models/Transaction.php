@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
+use App\Enums\TransactionStatus;
 
 class Transaction extends Model
 {
@@ -21,6 +22,10 @@ class Transaction extends Model
         'payment_link',
         'payment_status',
         'paid_at',
+    ];
+
+    protected $casts = [
+        'payment_status' => TransactionStatus::class,
     ];
 
     public function ticket() {

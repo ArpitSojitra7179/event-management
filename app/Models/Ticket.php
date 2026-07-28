@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
+use App\Enums\TicketStatus;
 
 class Ticket extends Model
 {
@@ -16,6 +17,10 @@ class Ticket extends Model
         'quantity',
         'total_price',
         'booking_status',
+    ];
+
+    protected $casts = [
+        'booking_status' => TicketStatus::class,
     ];
 
     public function user() {
