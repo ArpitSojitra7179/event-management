@@ -2,10 +2,10 @@
 
 Hello {{ $event->user->name ?? 'User' }},
 
-Your event request has been {{ ucfirst($event->status) }} by the administrator.
+Your event request has been {{ $event->status->value }} by the administrator.
 
 @component('mail::panel')
-Status: {{ ucfirst($event->status) }}
+Status: {{ $event->status->value }}
 @endcomponent
 
 @if($event->status === 'rejected' && !empty($reason))
