@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 use App\Mail\UserRegister;
 use App\Mail\ResetPasswordMail;
 use App\Models\User;
+use App\Http\helper;
+use App\Enums\UserStatus;
 
 class AuthController extends Controller
 {
@@ -72,7 +74,7 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            if ($user->status == 'banned') {
+            if ($user->status == UserStatus::BANNED) {
                 return response()->json([
                     'message' => 'you are banned, so cannot login',
                 ], 500);
@@ -103,7 +105,7 @@ class AuthController extends Controller
 
             $user = User::where('email', $request->email)->latest()->first();
 
-            $token = Str::random(60);
+            $token = helper::generateUniqueToken('password_reset_tokens', 'token', 60);
 
             DB::table('password_reset_tokens')->updateOrInsert([
                 'email' => $request->email,
