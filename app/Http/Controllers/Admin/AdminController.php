@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Models\UserMeta;
 use App\Models\EventMeta;
 use App\Models\EventCategory;
-use App\Interfaces\EventRepositoryInterface;
 use App\Mail\ApprovedOrganizerMail;
 
 class AdminController extends Controller
