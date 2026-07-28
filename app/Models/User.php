@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\softDeletes;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Cashier\Billable;
+use App\Enums\UserStatus;
 
 class User extends Authenticatable
 {
@@ -27,7 +28,12 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
+        'country_name',
+        'country_code',
+        'region_name',
+        'region_code',
         'status',
+        'api_token',
     ];
 
     /**
@@ -48,6 +54,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'status' => UserStatus::class,
     ];
 
 
@@ -82,5 +89,14 @@ class User extends Authenticatable
         return Attribute::make(
             set: fn ($value) => strtolower($value),
         );
+    }
+
+    public function routeNotificationForSlack($notification)
+    {
+        $meta = $this->metas()->where('key', 'slack_notification_key')->first();
+        $value = json_encode($meta->value);
+        $url = json_decode($value);
+
+        return $url->webhook_url;
     }
 }
