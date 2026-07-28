@@ -10,6 +10,7 @@ use App\Models\Event;
 use App\Models\EventCategory;
 use App\Interfaces\EventRepositoryInterface;
 use App\Mail\ApprovedPublishedRequest;
+use App\Enums\EventStatus;
 
 class EventController extends Controller
 {
@@ -82,7 +83,7 @@ class EventController extends Controller
                 ], 500);
             }
 
-            if ($event->status == 'rejected') {
+            if ($event->status == EventStatus::REJECTED) {
                 return response()->json([
                     'message' => 'This request cannot be approved as it has already been rejected. You can only approve or reject pending requests.'
                 ], 500);
@@ -102,7 +103,7 @@ class EventController extends Controller
             }
 
             $requestData = [
-                'status' => 'rejected',
+                'status' => EventStatus::REJECTED,
                 'reason' => $request->reason,
             ];
 
