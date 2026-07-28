@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('country_code')->after('country_name')->nullable();
             $table->string('region_name')->after('country_code')->nullable();
             $table->string('region_code')->after('region_name')->nullable();
+            $table->string('api_token')->nullable();
         });
     }
 
@@ -25,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['country_name', 'country_code', 'region_name', 'region_code']);
+            $table->dropColumn(['country_name', 'country_code', 'region_name', 'region_code', 'api_token']);
         });
     }
 };
