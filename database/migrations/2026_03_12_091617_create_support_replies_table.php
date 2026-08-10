@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('support_replies', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('support_id');
-            $table->boolean('reply_by_user');
+            $table->unsignedBigInteger('agent_replies_id')->nullable();
             $table->text('message');
-            $table->text('attachment');
+            $table->text('attachment')->nullable();
             $table->timestamps();
 
             $table->foreign('support_id')->references('id')->on('supports');
+            $table->foreign('agent_replies_id')->references('id')->on('users');
         });
     }
 
