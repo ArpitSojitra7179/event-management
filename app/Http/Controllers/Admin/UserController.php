@@ -16,16 +16,17 @@ class UserController extends Controller
             $search = $request->query('search');
             $status = $request->query('status');
             $role = $request->query('role');
+            $order = $request->query('order', 'desc');
 
-            $users = User::when($search, function($query) use ($search){ 
+            $users = User::when($search, function($query) use ($search) { 
                     $query->whereAny(['name', 'email'], 'like', "%$search%");
                 })
-            ->when($status, function($query) use ($status){ 
+            ->when($status, function($query) use ($status) { 
                     $query->where('status', $status);
                 })
             ->when($role, function($query) use ($role) {
                     $query->where('role', $role);
-            })->orderByDesc('id')->cursorPaginate(10);
+            })->orderBy('created_at', $order)->cursorPaginate(10);
 
             return response()->json([
                 'users' => $users,
@@ -74,7 +75,7 @@ class UserController extends Controller
     {
         try {
             if(!isset($status) || !in_array($status, ["active", "banned"])) {
-               return response()->json([
+                return response()->json([
                     'message' => 'Invalid status.',
                 ], 500);
             }
@@ -85,9 +86,11 @@ class UserController extends Controller
                 ], 500);
             }
 
-            $user->tokens->each(function ($token) {
-                $token->delete();
-            });
+            if ($status == "banned") {
+                $user->tokens->each(function ($token) {
+                    $token->delete();
+                });
+            }
 
             $user->update([
                 'status' => $status,

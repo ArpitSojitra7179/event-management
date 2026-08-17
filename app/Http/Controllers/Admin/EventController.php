@@ -47,7 +47,11 @@ class EventController extends Controller
     public function categoryIndex()
     {
         try {   
-            return $this->eventRepository->categories();
+            $categories = $this->eventRepository->categories();
+            
+            return response()->json([
+                "categories" => $categories
+            ], 200);
         } catch (\Exception $e) {
             report($e);
 
@@ -60,7 +64,11 @@ class EventController extends Controller
     public function index(Request $request)
     {
         try {
-            return $this->eventRepository->events($request);
+            $events = $this->eventRepository->events($request);
+
+            return response()->json([
+                'events' => $events,
+            ], 200);
         } catch (\Exception $e) {
             report($e);
 
@@ -73,7 +81,7 @@ class EventController extends Controller
     public function toggle(Request $request, Event $event, $status)
     {
         $request->validate([
-            'reason' => 'required|string',
+            'reason' => 'nullable|string',
         ]);
 
         try {
@@ -93,7 +101,7 @@ class EventController extends Controller
 
             if (!$eventRequest->exists()) {
                 return response()->json([
-                    'message' => 'event request not found.',
+                    'message' => 'Event request not found.',
                 ], 404);
             }
 
@@ -108,7 +116,7 @@ class EventController extends Controller
             ];
 
             if ($status == 'rejected') {
-                $eventMeta = $eventRequest->update([
+                $eventMeta = $eventRequest->updateOrCreate([
                     'value' => $requestData,
                 ]);
 
@@ -117,10 +125,11 @@ class EventController extends Controller
 
             Mail::to($event->user->email)
                 ->queue((new ApprovedPublishedRequest($event))
+                ->onQueue('default')
                 ->delay(now()->addSeconds(5)));
 
             return response()->json([
-                'message' => "event request has been {$status}",
+                'message' => "Event request has been {$status}",
             ], 200);
         } catch (\Exception $e) {
             report($e);
@@ -147,12 +156,12 @@ class EventController extends Controller
 
     public function update(Request $request, Event $event) {
         $request->validate([
-            'title' => 'nullable|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'location' => 'nullable|string',
-            'event_date' => 'nullable|date',
-            'ticket_price' => 'nullable|numeric',
-            'total_tickets' => 'nullable|integer',
+            'location' => 'required|string',
+            'event_date' => 'required|date',
+            'ticket_price' => 'required|numeric',
+            'total_tickets' => 'required|integer',
         ]);
 
         try {
@@ -177,7 +186,7 @@ class EventController extends Controller
             $event->delete();
 
             return response()->json([
-                'message' => 'Organizers event deleted successfully.',
+                'message' => 'Event deleted successfully.',
             ], 200);
         } catch (\Exception $e) {
             report($e);

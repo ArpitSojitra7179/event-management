@@ -58,7 +58,7 @@ class AdminController extends Controller
 
     public function toggle(Request $request, User $user, $status) {
         $request->validate([
-            'reason' => 'required|string',
+            'reason' => 'nullable|string',
         ]);
 
         try {
@@ -83,7 +83,7 @@ class AdminController extends Controller
 
             if (!$organizerRequest->exists()) {
                 return response()->json([
-                    'message' => 'user request not found',
+                    'message' => 'User request not found',
                 ], 404);
             }
             
@@ -103,7 +103,9 @@ class AdminController extends Controller
                 ]);
             }
 
-            Mail::to($user->email)->queue((new ApprovedOrganizerMail($user))->delay(now()->addSeconds(5)));
+            Mail::to($user->email)->queue((new ApprovedOrganizerMail($user))
+                ->onQueue('default')
+                ->delay(now()->addSeconds(5)));
 
             return response()->json([
                 'message' => "Your request is {$status}.",
