@@ -10,7 +10,7 @@ use App\Models\EventCategory;
 class EventRepository implements EventRepositoryInterface
 {
 	public function categories() {
-		$category = EventCategory::orderByDesc('id')->cursorPaginate(10);
+		$category = EventCategory::orderByDesc('created_at')->cursorPaginate(10);
 
 		return $category;
 	}
@@ -20,6 +20,7 @@ class EventRepository implements EventRepositoryInterface
 		$search = $request->query('search');
 		$category_id = $request->query('category_id');
 		$location = $request->query('location');
+		$order = $request->query('order', 'desc');
 
 		$events = Event::when($search, function($query) use ($search) { 
 				$query->whereAny(['title', 'description'], 'like', "%$search%");
@@ -29,7 +30,7 @@ class EventRepository implements EventRepositoryInterface
 		})
 		->when($location, function($query) use ($location) {
 				$query->where('location', 'like', "%$location%");
-		})->where('event_date', '>', now())->orderByDesc('id')->paginate();
+		})->where('event_date', '>', now())->orderBy('created_at', $order)->paginate(10);
 		
 		return $events;
 	}
