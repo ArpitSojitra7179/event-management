@@ -12,12 +12,16 @@ class SupportReplies extends Model
 
     protected $fillable = [
         'support_id',
-        'reply_by_user',
+        'agent_replies_id',
         'message',
         'attachment',
     ];
 
     public function support() {
         return $this->belongsTo(Support::class);
+    }
+
+    public function agent() {
+        return $this->belongsTo(User::class, 'agent_replies_id');
     }
 }

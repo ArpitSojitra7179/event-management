@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
+use App\Enums\SupportStatus;
 
 class Support extends Model
 {
@@ -12,10 +13,15 @@ class Support extends Model
 
     protected $fillable = [
         'user_id',
+        'title',
         'description',
         'priority',
         'department',
         'status',
+    ];
+
+    protected $casts = [
+        'status' => SupportStatus::class,
     ];
 
     public function user() {
