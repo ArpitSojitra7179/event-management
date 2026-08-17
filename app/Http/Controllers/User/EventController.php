@@ -20,7 +20,11 @@ class EventController extends Controller
     public function index(Request $request)
     {
         try {
-            return $this->eventRepository->events($request);   
+            $events = $this->eventRepository->events($request);   
+
+            return response()->json([
+                'events' => $events,
+            ], 200);
         } catch (\Exception $e) {
             report($e);
 
