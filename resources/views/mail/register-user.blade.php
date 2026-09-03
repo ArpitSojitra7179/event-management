@@ -8,9 +8,9 @@ You are registered successfullly.
 @endcomponent
 
 @component('mail::table')
-| ID              | Name              | Role              |
-|-----------------|-------------------|-------------------|
-| {{ $user->id }} | {{ $user->name }} | {{ $user->role }} |
+| Name              | Role              |
+|-------------------|-------------------|
+| {{ $user->name }} | {{ $user->role }} |
 @endcomponent
 
 @component('mail::subcopy')
