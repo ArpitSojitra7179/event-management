@@ -90,6 +90,10 @@ class UserController extends Controller
                 $user->tokens->each(function ($token) {
                     $token->delete();
                 });
+
+                $user->update([
+                    'api_token' => null,
+                ]);
             }
 
             $user->update([
