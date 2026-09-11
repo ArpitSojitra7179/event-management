@@ -28,6 +28,7 @@ class Event extends Model
 
     protected $casts = [
         'status' => EventStatus::class,
+        'event_date' => 'datetime',
     ];
 
     public function user() {
