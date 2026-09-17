@@ -43,21 +43,18 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email',
+            'name' => 'nullable|string|max:255',            
             'phone' => 'nullable|string|min:10|max:10',
         ]);
 
         try {
-            $email = User::where('email', $request->email)->exists();
+            $data = ($request->only('name', 'phone'));
 
-            if ($email) {
-                return response()->json([
-                    'message' => 'This email is already exists.',
-                ]);
+            if ($request->name !== $user->name) {
+                $data['avatar'] = 'https://api.dicebear.com/10.x/initials/svg?seed=' . urlencode($request->name);
             }
 
-            $user->update($request->only('name', 'email', 'phone'));
+            $user->update($data);
 
             return response()->json([
                 'message' => 'Your account has been updated successfully.',
