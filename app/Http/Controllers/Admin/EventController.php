@@ -142,6 +142,8 @@ class EventController extends Controller
 
     public function show(Event $event) {
         try {
+            $event = $this->eventRepository->event($event);
+
             return response()->json([
                 'event' => $event,
             ], 200);
