@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class SupportReplies extends Model
 {
@@ -23,5 +24,16 @@ class SupportReplies extends Model
 
     public function agent() {
         return $this->belongsTo(User::class, 'agent_replies_id');
+    }
+
+    protected $appends = [
+        'is_admin_reply',
+    ];
+
+    protected function isAdminReply(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->agent_replies_id !== null,
+        );
     }
 }
