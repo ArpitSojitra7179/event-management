@@ -9,4 +9,5 @@ interface EventRepositoryInterface
 {
 	public function categories();
 	public function events(Request $request);
+	public function event(Event $event);
 }
